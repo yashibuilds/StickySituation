@@ -3,7 +3,7 @@ using UnityEngine;
 public class NerdEnemy : MonoBehaviour
 {
     public bool isSilenced = false; // tells you if the nerd has gum on his face or not
-    public float detectionRange = 6.7f; // tells you how close the player gets before the nerd starts tattling.
+    public float detectionRange = 3.67f; // tells you how close the player gets before the nerd starts tattling.
     private GameObject player; // storing the player so we can access position info about them
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,7 +21,7 @@ public class NerdEnemy : MonoBehaviour
 
         float playerNerdDistance = Vector2.Distance(transform.position, player.transform.position);
         if (playerNerdDistance < detectionRange) {
-            Debug.Log("Nerd sees you!")
+            Debug.Log("Nerd sees you!");
         }
     }
 
