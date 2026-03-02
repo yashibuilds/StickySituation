@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public GameObject textobj;
     private TextMeshProUGUI text;
     private PlayerMovement player;
+    public GameObject winPanel;
+    public GameObject losePanel;
     
 
     private void Awake()
@@ -55,12 +57,14 @@ public class GameManager : MonoBehaviour
 
     public void loseGame()
     {
+        gameOver = true;
+        losePanel.SetActive(true);
 
     }
     public void winGame()
     {
-        gameOver = false;
-        SceneManager.LoadScene("Win");
+        gameOver = true;
+        winPanel.SetActive(true);
     }
 
 

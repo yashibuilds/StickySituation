@@ -20,25 +20,42 @@ public class NerdEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isSilenced) { // first check if nerd is silenced. if so, nothing happens.
+        if (isSilenced) { // first check if nerd is silenced. if so, just show the silnced sprite and nothing else happens.
             sprite.sprite=sprites[1];
             return;
+        } else {
+            // if not silenced yet, use normal nerd face without gum
+            sprite.sprite = sprites[0];
         }
 
+        // we're checking how close the player is to nerd. 
         float playerNerdDistance = Vector2.Distance(transform.position, player.transform.position);
+
+        // if player is too close and the nerd wasn't silenced, you lose
         if (playerNerdDistance < detectionRange) {
             Debug.Log("Nerd sees you!");
-            GetSilenced();
-            gm.useGum(true);
+            gm.loseGame();
+            // GetSilenced(); playing around with the behavior. for now, if you don't silence nerd in time, you lose
+            // gm.useGum(true);
         }
     }
 
     public void GetSilenced() {
+        // if our nerd is already silenced, do nothing 
+        if (isSilenced) {
+            return;
+        }
+        // silence snitch nerd. literally #1 opp, would catch hands with him if he was real tbh
         isSilenced = true;
+        gm.useGum(true); // spend one gum (lives decrease basically)
         
-        // use a gum (life). haven't set up GameManager so i'll wait to do this
     }
 
-    // if gum collides with nerd, we need to trigger GetSilenced
-    // write function later 
+    private void OnTriggerEnter2D(Collider2D other) {
+        // When gum hits nerd's face, silence him
+        if (other.CompareTag("Gum")) {
+            GetSilenced();
+            Destroy(other.gameObject);
+        }
+    }
 }
