@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 300f;
     public float maxSpeed = 3.0f;
     public float jumpForce = 100f;
+    public bool isStarStruck = false;
     private Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
     public bool onGround;
@@ -25,6 +26,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (isStarStruck) {
+            return;
+        } 
         float MoveHor = Input.GetAxisRaw("Horizontal");
         Vector2 movement = new Vector2(MoveHor * moveSpeed, 0);
         movement = movement * Time.deltaTime;
