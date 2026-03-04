@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     private PlayerMovement player;
     public GameObject winPanel;
     public GameObject losePanel;
-    
+    [Tooltip("Optional: shows hints like 'Press SPACE to use gum' when near the nerd.")]
+    public TextMeshProUGUI hintText;
 
     private void Awake()
     {
@@ -59,14 +60,21 @@ public class GameManager : MonoBehaviour
     {
         gameOver = true;
         losePanel.SetActive(true);
-
+        SetHint("", false);
     }
     public void winGame()
     {
         gameOver = true;
         winPanel.SetActive(true);
+        SetHint("", false);
     }
 
+    public void SetHint(string message, bool show)
+    {
+        if (hintText == null) return;
+        hintText.gameObject.SetActive(show);
+        if (show) hintText.text = message;
+    }
 
     // Update is called once per frame
     void Update()
