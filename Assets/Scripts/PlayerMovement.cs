@@ -1,14 +1,22 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 300f;
     public float maxSpeed = 3.0f;
     public float jumpForce = 100f;
+    public float hangMoveSpeed = 2.25f;
+    public float ceilingCheckDistance = 1.1f;
+    public KeyCode hangKey = KeyCode.LeftShift;
+    public LayerMask hangableCeilingMask;
+    public float hangOffset = 0.08f;
     public bool isStarStruck = false;
+    public bool isHanging = false;
     private Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
+    private Collider2D playerCol;
+    private float defaultGravityScale;
     public bool onGround;
     public Sprite[] sprites;
     public GameObject gum;
@@ -17,18 +25,57 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        playerCol = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = sprites[0];
+        defaultGravityScale = rb.gravityScale;
         gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+
+        if (hangableCeilingMask.value == 0)
+        {
+            int groundLayer = LayerMask.NameToLayer("Ground");
+            if (groundLayer >= 0)
+            {
+                hangableCeilingMask = 1 << groundLayer;
+            }
+        }
     }
 
     // Update is called once per frame
 
     void Update()
     {
-        if (isStarStruck) {
+        if (isStarStruck || gm == null || gm.gameOver) {
+            if (isHanging) StopHanging();
             return;
-        } 
+        }
+
+        if (Input.GetKeyDown(hangKey))
+        {
+            if (isHanging) StopHanging();
+            else TryHangFromCeiling();
+        }
+
+        if (isHanging)
+        {
+            HandleHangingMovement();
+
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                StopHanging();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                NerdEnemy.TrySilenceNearby(transform.position);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                ShootToMouse();
+            }
+            return;
+        }
+
         float MoveHor = Input.GetAxisRaw("Horizontal");
         Vector2 movement = new Vector2(MoveHor * moveSpeed, 0);
         movement = movement * Time.deltaTime;
@@ -49,19 +96,83 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(-maxSpeed, rb.linearVelocity.y);
         }
-        if (Input.GetKeyDown(KeyCode.Space) && canJump())
+
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && canJump())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
             rb.AddForce(new Vector2(0, jumpForce));
         }
-        if (Input.GetMouseButtonUp(0))
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            shoot();
+            NerdEnemy.TrySilenceNearby(transform.position);
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            ShootToMouse();
+        }
+    }
+
+    private void TryHangFromCeiling()
+    {
+        Vector2 origin = transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.up, ceilingCheckDistance, hangableCeilingMask);
+        if (!hit.collider)
+        {
+            return;
         }
 
+        isHanging = true;
+        onGround = false;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.zero;
+
+        if (playerCol != null)
+        {
+            float topExtent = playerCol.bounds.extents.y;
+            transform.position = new Vector3(transform.position.x, hit.point.y - topExtent - hangOffset, transform.position.z);
+        }
     }
-    private void shoot()
+
+    private void StopHanging()
     {
+        isHanging = false;
+        rb.gravityScale = defaultGravityScale;
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, -0.5f);
+    }
+
+    private void HandleHangingMovement()
+    {
+        float moveHor = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(moveHor * hangMoveSpeed, 0f);
+
+        if (moveHor > 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else if (moveHor < 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+    }
+
+    private void ShootFacingDirection()
+    {
+        if (gm.gumCount <= 0) return;
+
+        GameObject gumObj = Instantiate(gum, transform.position, Quaternion.identity);
+        gum gumScript = gumObj.GetComponent<gum>();
+        if (gumScript != null)
+        {
+            Vector2 direction = spriteRenderer.flipX ? Vector2.right : Vector2.left;
+            gumScript.SetDirection(direction);
+        }
+        gm.useGum(false);
+    }
+
+    private void ShootToMouse()
+    {
+        if (gm.gumCount <= 0) return;
         Instantiate(gum, transform.position, Quaternion.identity);
         gm.useGum(false);
     }

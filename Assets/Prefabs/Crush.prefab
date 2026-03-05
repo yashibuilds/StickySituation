@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 3612383795429381529}
   - component: {fileID: 2444080200213068022}
   - component: {fileID: 1495582865431851373}
+  - component: {fileID: 7350022222222222222}
   m_Layer: 0
   m_Name: Crush
-  m_TagString: Jock
+  m_TagString: Crush
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -153,3 +154,18 @@ CapsuleCollider2D:
   m_Offset: {x: -0.54766965, y: -0.023240117}
   m_Size: {x: 2.006667, y: 5.346366}
   m_Direction: 0
+--- !u!114 &7350022222222222222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2266004622666278822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c5fdbc0fba3a4bccb177d6c37cdc31b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  starStruckDuration: 3
+  detectionRange: 3
+  retriggerPadding: 0.75

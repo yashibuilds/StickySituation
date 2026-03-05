@@ -167,7 +167,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSilenced: 0
-  detectionRange: 3.67
+  detectionRange: 2.8
+  detectionTime: 1.35
   sprites:
   - {fileID: -622856397119489629, guid: 443bd87149f46b04f95e5e304282bd93, type: 3}
   - {fileID: 4254213478319904753, guid: dad2bc42db2ab9240a18fe74e23d7bf6, type: 3}

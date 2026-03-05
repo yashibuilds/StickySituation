@@ -1,17 +1,20 @@
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections.Generic;
+
 public class NerdEnemy : MonoBehaviour
 {
-    public bool isSilenced = false; // tells you if the nerd has gum on his face or not
-    public float detectionRange = 0.67f; // tells you how close the player gets before the nerd can start tattling.
-    public float detectionTime = 1.0f;
-    private float detectionTimer = 0f;
-    public Sprite[] sprites;
-    private GameObject player; // storing the player so we can access position info about them
+    private static readonly List<NerdEnemy> ActiveNerds = new List<NerdEnemy>();
+
+    public bool isSilenced = false; // tells you whether our nerd has been shot with gum or not
+    public float detectionRange = 2.8f; // how close can you get to the nerd before he starts tattling
+    public float detectionTime = 1.35f; // how long you have to make it out of his circle before you fail
+    private float detectionTimer = 0f; // how long you've been in the circle 
+    public Sprite[] sprites; // array containing sprites 
+    private GameObject player;
     private GameManager gm;
     private SpriteRenderer sprite;
     private LineRenderer rangeCircle;
-    public bool showRangeInGame = true;
+    public bool showRangeInGame = true; // this is for testing purposes. trying to see if game works intuitively without this
 
     void Start()
     {
@@ -23,7 +26,52 @@ public class NerdEnemy : MonoBehaviour
             DrawRangeCircle();
     }
 
-    void DrawRangeCircle() // the amount of docs i had to read just for this circle bruh.
+    void OnEnable() // run this when a nerd appears in the level
+    {
+        if (!ActiveNerds.Contains(this))
+        {
+            ActiveNerds.Add(this);
+        }
+    }
+
+    void OnDisable() // run when a nerd disappears 
+    {
+        ActiveNerds.Remove(this);
+    }
+
+    public static bool TrySilenceNearby(Vector2 playerPosition)
+    {
+        NerdEnemy closest = GetClosestNearby(playerPosition);
+        if (closest == null) return false;
+        closest.GetSilenced();
+        return true;
+    }
+
+    public static NerdEnemy GetClosestNearby(Vector2 playerPosition)
+    {
+        NerdEnemy closest = null;
+        float closestDist = float.MaxValue;
+
+        for (int i = 0; i < ActiveNerds.Count; i++)
+        {
+            NerdEnemy nerd = ActiveNerds[i];
+            if (nerd == null || nerd.isSilenced || nerd.gm == null || nerd.gm.gumCount <= 0 || nerd.gm.gameOver)
+            {
+                continue;
+            }
+
+            float dist = Vector2.Distance(playerPosition, nerd.transform.position);
+            if (dist <= nerd.detectionRange && dist < closestDist)
+            {
+                closest = nerd;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
+
+    void DrawRangeCircle()
     {
         GameObject circleObj = new GameObject("NerdRangeCircle");
         circleObj.transform.SetParent(transform);
@@ -47,42 +95,43 @@ public class NerdEnemy : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (isSilenced) { // first check if nerd is silenced. if so, just show the silnced sprite and nothing else happens.
-            sprite.sprite = sprites[1];
-            gm.SetHint("", false);
-            if (rangeCircle != null) rangeCircle.enabled = false; // hide circle when silenced
+        if (player == null || gm == null)
+        {
             return;
         }
-        if (rangeCircle != null) {
+
+        if (isSilenced)
+        {
+            if (sprites != null && sprites.Length > 1)
+            {
+                sprite.sprite = sprites[1];
+            }
+            gm.SetHint("", false);
+            if (rangeCircle != null) rangeCircle.enabled = false;
+            return;
+        }
+
+        if (rangeCircle != null)
+        {
             rangeCircle.enabled = true;
         }
 
-        // if not silenced yet, use normal nerd face without gum
-        sprite.sprite = sprites[0];
+        if (sprites != null && sprites.Length > 0)
+        {
+            sprite.sprite = sprites[0];
+        }
 
-        // we're checking how close the player is to nerd. 
         float playerNerdDistance = Vector2.Distance(transform.position, player.transform.position);
 
         if (playerNerdDistance < detectionRange)
         {
-            // show hint: no "shooting". SPACE uses gum when you're in the circle
             if (gm.gumCount > 0)
-                gm.SetHint("In the red circle → press SPACE to use gum", true);
+                gm.SetHint("Press SPACE in the red zone to gum the nerd, or sprint through fast.", true);
             else
                 gm.SetHint("No gum left — run through the circle quickly!", true);
 
-            // if player presses Space and has gum, silence the nerd (no projectile)
-            if (gm.gumCount > 0 && Input.GetKeyDown(KeyCode.Space))
-            {
-                GetSilenced();
-                gm.SetHint("", false);
-                return;
-            }
-
-            // otherwise count time in range, tattle after detectionTime seconds
             detectionTimer += Time.deltaTime;
             if (detectionTimer >= detectionTime)
             {
@@ -92,24 +141,36 @@ public class NerdEnemy : MonoBehaviour
         }
         else
         {
-            // stepped out of range, reset so you can try again or dash through
             detectionTimer = 0f;
             gm.SetHint("", false);
         }
     }
 
-    public void GetSilenced() {
-        // if our nerd is already silenced, do nothing 
-        if (isSilenced) {
+    public void GetSilenced()
+    {
+        if (isSilenced || gm == null)
+        {
             return;
         }
-        // silence snitch nerd. literally #1 opp, would catch hands with him if he was real tbh
+
         isSilenced = true;
-        gm.useGum(true); // spend one gum (lives decrease basically)
-        
+        detectionTimer = 0f;
+        if (sprite == null)
+        {
+            sprite = GetComponent<SpriteRenderer>();
+        }
+        if (sprite != null && sprites != null && sprites.Length > 1)
+        {
+            sprite.sprite = sprites[1];
+        }
+        if (rangeCircle != null)
+        {
+            rangeCircle.enabled = false;
+        }
+        gm.SetHint("", false);
+        gm.useGum(false);
     }
 
-    // draw detection range in editor 
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1f, 0.2f, 0.2f, 0.4f);

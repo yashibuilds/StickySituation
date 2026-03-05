@@ -46,9 +46,25 @@ public class GameManager : MonoBehaviour
     }
     public void useGum(bool hit = false)
     {
+        if (gameOver) return;
+
+        if (gumCount <= 0)
+        {
+            loseGame();
+            return;
+        }
+
         gumCount = gumCount - 1;
-        gums[gumCount].sprite = dmg;
-        if (hit) { player.takeHit(); }
+        if (gumCount >= 0 && gumCount < gums.Length)
+        {
+            gums[gumCount].sprite = dmg;
+        }
+
+        if (hit && player != null)
+        {
+            player.takeHit();
+        }
+
         if (gumCount <= 0)
         {
             gameOver = true;

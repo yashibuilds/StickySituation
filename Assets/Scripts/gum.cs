@@ -2,22 +2,31 @@ using UnityEngine;
 
 public class gum : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     public float speed = 1.0f;
     private Vector3 dir;
     private float decayTimer = 3f;
-    void Start()
-    {
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorld.z = 0f; // Important for 2D
+    private bool hasCustomDirection = false;
 
-        dir = mouseWorld - transform.position;
-        dir = dir.normalized;
+    public void SetDirection(Vector2 direction)
+    {
+        dir = new Vector3(direction.x, direction.y, 0f).normalized;
+        hasCustomDirection = true;
     }
 
-    // Update is called once per frame
+    void Start()
+    {
+        if (!hasCustomDirection)
+        {
+            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorld.z = 0f;
+
+            dir = mouseWorld - transform.position;
+            dir = dir.normalized;
+        }
+    }
+
     void Update()
-    {  
+    {
         decayTimer -= Time.deltaTime;
         if (decayTimer < 0)
         {
@@ -25,19 +34,34 @@ public class gum : MonoBehaviour
         }
         transform.position += dir * speed * Time.deltaTime;
     }
+    private void HandleHit(Transform hitTransform)
+    {
+        if (hitTransform.CompareTag("Nerd"))
+        {
+            NerdEnemy nerd = hitTransform.gameObject.GetComponent<NerdEnemy>();
+            if (nerd != null)
+            {
+                nerd.GetSilenced();
+            }
+            Destroy(gameObject);
+        }
+        else if (hitTransform.CompareTag("Jock"))
+        {
+            Destroy(gameObject);
+        }
+        else if (hitTransform.CompareTag("Ground"))
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.CompareTag("Nerd"))
-        {
-            collision.gameObject.GetComponent<NerdEnemy>().GetSilenced();
-            Destroy(gameObject);
-        }else if (collision.transform.CompareTag("Jock"))
-        {
-            Destroy(gameObject) ;
-        } 
-        else if (collision.transform.CompareTag("Ground"))
-        {
-            Destroy(gameObject) ;
-        }
+        HandleHit(collision.transform);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        HandleHit(other.transform);
     }
 }

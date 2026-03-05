@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3612383795429381529}
   - component: {fileID: 2444080200213068022}
   - component: {fileID: 1495582865431851373}
+  - component: {fileID: 7350011111111111111}
   m_Layer: 0
   m_Name: Jock
   m_TagString: Jock
@@ -153,3 +154,22 @@ CapsuleCollider2D:
   m_Offset: {x: 0.032395452, y: -0.04783569}
   m_Size: {x: 2.0901327, y: 5.328172}
   m_Direction: 0
+--- !u!114 &7350011111111111111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2266004622666278822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98534bf0af3a4248b1e6762dabae0a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basketballPrefab: {fileID: 0}
+  throwPoint: {fileID: 0}
+  aggroRange: 8
+  throwCooldown: 2.25
+  projectileSpeed: 8
+  maxAimYOffset: 1.8
+  throwPointYOffset: 0.8
