@@ -135,8 +135,9 @@ public class NerdEnemy : MonoBehaviour
             detectionTimer += Time.deltaTime;
             if (detectionTimer >= detectionTime)
             {
-                Debug.Log("Nerd tattles on you!");
-                gm.loseGame();
+                Debug.Log("Nerd tattled. You lose one gum life.");
+                gm.useGum(true);
+                detectionTimer = 0f;
             }
         }
         else
