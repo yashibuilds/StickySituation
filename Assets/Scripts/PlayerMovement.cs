@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     public KeyCode hangKey = KeyCode.LeftShift;
     public LayerMask hangableCeilingMask;
     public float hangOffset = 0.08f;
+    public float starStruckMoveMultiplier = 0.06f;
+    public float starStruckMaxSpeedMultiplier = 0.12f;
     public bool isStarStruck = false;
     public bool isHanging = false;
     private Rigidbody2D rb;
@@ -19,8 +21,10 @@ public class PlayerMovement : MonoBehaviour
     private float defaultGravityScale;
     public bool onGround;
     public Sprite[] sprites;
+    public Sprite heartEyesSprite;
     public GameObject gum;
     private GameManager gm;
+    private Coroutine hitRoutine;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -45,13 +49,19 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (isStarStruck || gm == null || gm.gameOver) {
+        if (gm == null || gm.gameOver) {
             if (isHanging) StopHanging();
             return;
         }
 
+        if (isStarStruck && isHanging)
+        {
+            StopHanging();
+        }
+
         if (Input.GetKeyDown(hangKey))
         {
+            if (isStarStruck) return;
             if (isHanging) StopHanging();
             else TryHangFromCeiling();
         }
@@ -77,7 +87,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         float MoveHor = Input.GetAxisRaw("Horizontal");
-        Vector2 movement = new Vector2(MoveHor * moveSpeed, 0);
+        float moveMultiplier = isStarStruck ? starStruckMoveMultiplier : 1f;
+        float speedCapMultiplier = isStarStruck ? starStruckMaxSpeedMultiplier : 1f;
+
+        Vector2 movement = new Vector2(MoveHor * moveSpeed * moveMultiplier, 0);
         movement = movement * Time.deltaTime;
         rb.AddForce(movement);
         if (MoveHor > 0)
@@ -88,16 +101,17 @@ public class PlayerMovement : MonoBehaviour
         {
             spriteRenderer.flipX = false;
         }
-        if (rb.linearVelocity.x > maxSpeed)
+        float currentMaxSpeed = maxSpeed * speedCapMultiplier;
+        if (rb.linearVelocity.x > currentMaxSpeed)
         {
-            rb.linearVelocity = new Vector2(maxSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(currentMaxSpeed, rb.linearVelocity.y);
         }
-        if (rb.linearVelocity.x < -maxSpeed)
+        if (rb.linearVelocity.x < -currentMaxSpeed)
         {
-            rb.linearVelocity = new Vector2(-maxSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(-currentMaxSpeed, rb.linearVelocity.y);
         }
 
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && canJump())
+        if (!isStarStruck && (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && canJump())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
             rb.AddForce(new Vector2(0, jumpForce));
@@ -190,9 +204,49 @@ public class PlayerMovement : MonoBehaviour
 
     public void takeHit()
     {
-        StartCoroutine(ow());
-
+        // Hurt visuals are intentionally disabled for now.
+        return;
     }
+
+    public void SetStarStruckState(bool active)
+    {
+        isStarStruck = active;
+
+        if (active)
+        {
+            if (hitRoutine != null)
+            {
+                StopCoroutine(hitRoutine);
+                hitRoutine = null;
+            }
+            spriteRenderer.color = Color.white;
+            if (isHanging) StopHanging();
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x * 0.2f, rb.linearVelocity.y);
+            }
+
+            ApplyStarStruckSpriteOrFallback();
+        }
+        else if (sprites != null && sprites.Length > 0)
+        {
+            spriteRenderer.color = Color.white;
+            spriteRenderer.sprite = sprites[0];
+        }
+    }
+
+    private void ApplyStarStruckSpriteOrFallback()
+    {
+        if (heartEyesSprite != null)
+        {
+            spriteRenderer.sprite = heartEyesSprite;
+        }
+        else if (sprites != null && sprites.Length > 0)
+        {
+            spriteRenderer.sprite = sprites[0];
+        }
+    }
+
     IEnumerator ow()
     {
         spriteRenderer.sprite = sprites[1];
@@ -201,7 +255,15 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.25f);
         spriteRenderer.color = new Color(1f, 1f, 1f);
         yield return new WaitForSeconds(0.25f);
-        spriteRenderer.sprite = sprites[0];
+        if (isStarStruck)
+        {
+            ApplyStarStruckSpriteOrFallback();
+        }
+        else
+        {
+            spriteRenderer.sprite = sprites[0];
+        }
 
+        hitRoutine = null;
     }
 }

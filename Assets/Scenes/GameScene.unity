@@ -418,6 +418,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 316425226}
   m_CullTransparentMesh: 1
+--- !u!4 &413137752 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
+  m_PrefabInstance: {fileID: 2072123970143559075}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &438218898
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,7 +516,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 03edb4bacfb70974ba8003ee3ae57c57, type: 3}
       propertyPath: m_LocalPosition.x
+<<<<<<< HEAD
       value: 6
+=======
+      value: 3.68
+>>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 03edb4bacfb70974ba8003ee3ae57c57, type: 3}
       propertyPath: m_LocalPosition.y
@@ -918,7 +927,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -5405349054264099260, guid: 2c941627c0028428fbce752f22ed1504, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1348,7 +1357,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -5405349054264099260, guid: 2c941627c0028428fbce752f22ed1504, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1772,6 +1781,7 @@ Transform:
   m_Children:
   - {fileID: 1062583960}
   - {fileID: 1288738527}
+  - {fileID: 413137752}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1062583960 stripped
@@ -1912,7 +1922,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -5405349054264099260, guid: 2c941627c0028428fbce752f22ed1504, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2070,12 +2080,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   hangOffset: 0.08
+<<<<<<< HEAD
+=======
+  starStruckMoveMultiplier: 0.06
+  starStruckMaxSpeedMultiplier: 0.12
+>>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
   isStarStruck: 0
   isHanging: 0
   onGround: 0
   sprites:
   - {fileID: 21300000, guid: 179708d0a15ab3a40a9b70641acc548a, type: 3}
   - {fileID: -2335329164740500141, guid: bf9c7f08dd41c6d4297cb19a65cab817, type: 3}
+  heartEyesSprite: {fileID: -7683463592558079579, guid: a535b2bb0208f4e21bf2b1b8b58042fd, type: 3}
   gum: {fileID: 1452838925565410997, guid: 8c86ac17c117fbf4288a0a819651d9ca, type: 3}
 --- !u!70 &1156026788
 CapsuleCollider2D:
@@ -2395,23 +2411,35 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1054769837}
     m_Modifications:
     - target: {fileID: 2266004622666278822, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_Name
       value: Crush
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.17182925
+      objectReference: {fileID: 0}
+    - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.17182925
+      objectReference: {fileID: 0}
+    - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.17182925
+      objectReference: {fileID: 0}
+    - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.85
+      value: 1.7486933
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.78
+      value: -1.8012248
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.5048308
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2419,15 +2447,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 5174658e38346114a8986905c091f692, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2527,11 +2555,19 @@ PrefabInstance:
     - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
       propertyPath: hp
       value: 
+<<<<<<< HEAD
       objectReference: {fileID: 1669322881946430781, guid: 12dd576fa71394e46a9447716027c442, type: 3}
     - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
       propertyPath: dmg
       value: 
       objectReference: {fileID: -654569518285863351, guid: f0dc5409295c6f84baf8f9d5ba8e73e9, type: 3}
+=======
+      objectReference: {fileID: -5405349054264099260, guid: 2c941627c0028428fbce752f22ed1504, type: 3}
+    - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
+      propertyPath: dmg
+      value: 
+      objectReference: {fileID: -6378921619899458215, guid: c9511417cea434dfba5c05a2287c3cc7, type: 3}
+>>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
     - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
       propertyPath: textobj
       value: 
@@ -2622,4 +2658,3 @@ SceneRoots:
   - {fileID: 1452398545}
   - {fileID: 999910165}
   - {fileID: 848524711}
-  - {fileID: 2072123970143559075}

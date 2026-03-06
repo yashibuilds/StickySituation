@@ -3,13 +3,17 @@ using UnityEngine;
 
 public class CrushEnemy : MonoBehaviour
 {
-    public float starStruckDuration = 3f; // how long our player is frozen for
-    public float detectionRange = 3f; // how close our player can get before he gets starstruck
+    public float starStruckDuration = 3f;
+    public float detectionRange = 3f;
+    public float retriggerPadding = 0.75f;
+    public float cooldownAfterEffect = 0.5f;
 
     private GameObject player;
     private PlayerMovement pc;
     private GameManager gm;
-    private bool triggered = false;
+    private bool waitingForExit = false;
+    private bool effectRunning = false;
+    private float nextAllowedTriggerTime = 0f;
 
     void Start()
     {
@@ -20,27 +24,51 @@ public class CrushEnemy : MonoBehaviour
 
     void Update()
     {
-        if (triggered) return;
+        if (player == null || pc == null || gm == null || gm.gameOver) return;
 
         float dist = Vector2.Distance(transform.position, player.transform.position);
 
-        if (dist < detectionRange)
+        if (waitingForExit)
         {
-            triggered = true;
+            if (dist > detectionRange + retriggerPadding)
+            {
+                waitingForExit = false;
+            }
+            return;
+        }
+
+        if (!effectRunning && Time.time >= nextAllowedTriggerTime && dist <= detectionRange)
+        {
+            waitingForExit = true;
             StartCoroutine(StarStruck());
         }
     }
 
     IEnumerator StarStruck()
     {
-        pc.isStarStruck = true;
+        effectRunning = true;
+        pc.SetStarStruckState(true);
         gm.SetHint("You saw your crush... can't move!", true);
 
-        yield return new WaitForSeconds(starStruckDuration);
+        float timer = 0f;
+        while (timer < starStruckDuration)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
-        pc.isStarStruck = false;
+        pc.SetStarStruckState(false);
         gm.SetHint("", false);
-        triggered = false; // lets it trigger again if player walks back into range
+        nextAllowedTriggerTime = Time.time + cooldownAfterEffect;
+        effectRunning = false;
+    }
+
+    private void OnDisable()
+    {
+        if (pc != null)
+        {
+            pc.SetStarStruckState(false);
+        }
     }
 
     private void OnDrawGizmos()
