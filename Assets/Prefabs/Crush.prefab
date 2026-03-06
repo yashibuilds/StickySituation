@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5fdbc0fba3a4bccb177d6c37cdc31b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starStruckDuration: 3
+  starStruckDuration: 1.2
   detectionRange: 3
   retriggerPadding: 0.75
   cooldownAfterEffect: 0.5

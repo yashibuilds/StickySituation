@@ -31,9 +31,16 @@ public class PlayerMovement : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerCol = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = sprites[0];
+        if (spriteRenderer != null && sprites != null && sprites.Length > 0)
+        {
+            spriteRenderer.sprite = sprites[0];
+        }
         defaultGravityScale = rb.gravityScale;
-        gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        GameObject gmObj = GameObject.FindWithTag("GameController");
+        if (gmObj != null)
+        {
+            gm = gmObj.GetComponent<GameManager>();
+        }
 
         if (hangableCeilingMask.value == 0)
         {

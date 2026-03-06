@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CrushEnemy : MonoBehaviour
 {
-    public float starStruckDuration = 3f;
+    public float starStruckDuration = 1.2f;
     public float detectionRange = 3f;
     public float retriggerPadding = 0.75f;
     public float cooldownAfterEffect = 0.5f;
@@ -14,17 +14,27 @@ public class CrushEnemy : MonoBehaviour
     private bool waitingForExit = false;
     private bool effectRunning = false;
     private float nextAllowedTriggerTime = 0f;
+    private bool hasTriggeredOnce = false;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        pc = player.GetComponent<PlayerMovement>();
-        gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        if (player != null)
+        {
+            pc = player.GetComponent<PlayerMovement>();
+        }
+
+        GameObject gmObj = GameObject.FindWithTag("GameController");
+        if (gmObj != null)
+        {
+            gm = gmObj.GetComponent<GameManager>();
+        }
     }
 
     void Update()
     {
         if (player == null || pc == null || gm == null || gm.gameOver) return;
+        if (hasTriggeredOnce) return;
 
         float dist = Vector2.Distance(transform.position, player.transform.position);
 
@@ -40,6 +50,7 @@ public class CrushEnemy : MonoBehaviour
         if (!effectRunning && Time.time >= nextAllowedTriggerTime && dist <= detectionRange)
         {
             waitingForExit = true;
+            hasTriggeredOnce = true;
             StartCoroutine(StarStruck());
         }
     }
@@ -69,6 +80,14 @@ public class CrushEnemy : MonoBehaviour
         {
             pc.SetStarStruckState(false);
         }
+    }
+
+    public void ResetForSpawn()
+    {
+        waitingForExit = false;
+        effectRunning = false;
+        nextAllowedTriggerTime = 0f;
+        hasTriggeredOnce = false;
     }
 
     private void OnDrawGizmos()

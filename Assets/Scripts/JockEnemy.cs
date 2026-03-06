@@ -17,11 +17,15 @@ public class JockEnemy : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player");
+        if (idle != null && sr != null)
+        {
+            sr.sprite = idle;
+        }
     }
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null || sr == null) return;
 
         elapsed += Time.deltaTime;
 
@@ -45,6 +49,8 @@ public class JockEnemy : MonoBehaviour
 
     IEnumerator ThrowBall()
     {
+        if (sr == null || ball == null) yield break;
+
         sr.sprite = attack;
         yield return new WaitForSeconds(0.2f);
         Instantiate(ball, transform.position + new Vector3(dir * 1f, 0f), Quaternion.identity);

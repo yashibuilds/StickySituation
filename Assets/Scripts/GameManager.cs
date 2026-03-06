@@ -17,14 +17,27 @@ public class GameManager : MonoBehaviour
     private PlayerMovement player;
     public GameObject winPanel;
     public GameObject losePanel;
-    [Tooltip("Temporary: disables fail screen and game over state when losing.")]
-    public bool suppressLoseScreen = true;
+    [Tooltip("Set true to suppress lose panel/game over while testing.")]
+    public bool suppressLoseScreen = false;
     [Tooltip("Optional: shows hints like 'Press SPACE to use gum' when near the nerd.")]
     public TextMeshProUGUI hintText;
 
+    private void ResolvePlayerRefs()
+    {
+        if (play == null)
+        {
+            GameObject found = GameObject.FindWithTag("Player");
+            if (found != null) play = found;
+        }
+
+        if (player == null && play != null)
+        {
+            player = play.GetComponent<PlayerMovement>();
+        }
+    }
+
     private void Awake()
     {
-        suppressLoseScreen = true;
         if (Instance == null)
         {
             Instance = this;
@@ -35,28 +48,36 @@ public class GameManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         gumCount = 3;
-        play = GameObject.FindWithTag("Player");
-        player = play.GetComponent<PlayerMovement>();
+        ResolvePlayerRefs();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     void Start()
     {
+        suppressLoseScreen = false;
+        ResolvePlayerRefs();
+
         foreach (Image gum in gums) {
             gum.sprite = hp;
         }
-        text = textobj.GetComponent<TextMeshProUGUI>();
+        if (textobj != null)
+        {
+            text = textobj.GetComponent<TextMeshProUGUI>();
+        }
+
+        if (GetComponent<EnemySpawner>() == null)
+        {
+            gameObject.AddComponent<EnemySpawner>();
+        }
     }
     public void useGum(bool hit = false)
     {
         if (gameOver) return;
+        ResolvePlayerRefs();
 
         if (gumCount <= 0)
         {
-            if (hit)
-            {
-                loseGame();
-            }
+            loseGame();
             return;
         }
 
@@ -71,7 +92,7 @@ public class GameManager : MonoBehaviour
             player.takeHit();
         }
 
-        if (hit && gumCount <= 0)
+        if (gumCount <= 0)
         {
             loseGame();
         }
@@ -79,23 +100,26 @@ public class GameManager : MonoBehaviour
 
     public void loseGame()
     {
+        gameOver = true;
+        ResolvePlayerRefs();
+
         if (suppressLoseScreen)
         {
             SetHint("", false);
             return;
         }
 
-        gameOver = true;
-        losePanel.SetActive(true);
+        if (losePanel != null) losePanel.SetActive(true);
         SetHint("", false);
-        play.SetActive(false);
+        if (play != null) play.SetActive(false);
     }
     public void winGame()
     {
         gameOver = true;
-        winPanel.SetActive(true);
+        ResolvePlayerRefs();
+        if (winPanel != null) winPanel.SetActive(true);
         SetHint("", false);
-        play.SetActive(false);  
+        if (play != null) play.SetActive(false);
     }
 
     public void SetHint(string message, bool show)
@@ -109,6 +133,18 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (gameOver) return;
+        ResolvePlayerRefs();
+
+        if (text == null && textobj != null)
+        {
+            text = textobj.GetComponent<TextMeshProUGUI>();
+        }
+
+        if (gumCount <= 0)
+        {
+            loseGame();
+            return;
+        }
 
         timeLeft -= Time.deltaTime;
         if (timeLeft <= 0f)
@@ -116,6 +152,9 @@ public class GameManager : MonoBehaviour
             timeLeft = 0f;
             loseGame();
         }
-        text.text = "Remaining Time: " + Mathf.Max(Mathf.FloorToInt(timeLeft),0).ToString();
+        if (text != null)
+        {
+            text.text = "Remaining Time: " + Mathf.Max(Mathf.FloorToInt(timeLeft),0).ToString();
+        }
     }
 }

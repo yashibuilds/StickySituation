@@ -18,7 +18,11 @@ public class NerdEnemy : MonoBehaviour
 
     void Start()
     {
-        gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        GameObject gmObj = GameObject.FindWithTag("GameController");
+        if (gmObj != null)
+        {
+            gm = gmObj.GetComponent<GameManager>();
+        }
         player = GameObject.FindGameObjectWithTag("Player");
         sprite = GetComponent<SpriteRenderer>();
 
@@ -170,6 +174,25 @@ public class NerdEnemy : MonoBehaviour
         }
         gm.SetHint("", false);
         gm.useGum(false);
+    }
+
+    public void ResetForSpawn()
+    {
+        isSilenced = false;
+        detectionTimer = 0f;
+
+        if (sprite == null)
+        {
+            sprite = GetComponent<SpriteRenderer>();
+        }
+        if (sprite != null && sprites != null && sprites.Length > 0)
+        {
+            sprite.sprite = sprites[0];
+        }
+        if (rangeCircle != null)
+        {
+            rangeCircle.enabled = true;
+        }
     }
 
     private void OnDrawGizmos()

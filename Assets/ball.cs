@@ -13,10 +13,19 @@ public class ball : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        GameObject gmObj = GameObject.FindWithTag("GameController");
+        if (gmObj != null)
+        {
+            gm = gmObj.GetComponent<GameManager>();
+        }
+        rb = GetComponent<Rigidbody2D>();
+        if (player == null || rb == null)
+        {
+            return;
+        }
+
         Vector3 dir = player.transform.position - transform.position;
         dir = dir.normalized;
-        rb = GetComponent<Rigidbody2D>();
         rb.AddForce(dir*force);
     }
 
@@ -39,7 +48,10 @@ public class ball : MonoBehaviour
         }
         else if (collision.transform.CompareTag("Player"))
         {
-            gm.useGum(true);
+            if (gm != null)
+            {
+                gm.useGum(true);
+            }
             Destroy(gameObject);
         }
     }
