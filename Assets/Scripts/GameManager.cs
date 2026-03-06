@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public Sprite dmg;
     public GameObject textobj;
     private TextMeshProUGUI text;
+    private GameObject play; 
     private PlayerMovement player;
     public GameObject winPanel;
     public GameObject losePanel;
@@ -33,7 +34,8 @@ public class GameManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         gumCount = 3;
-        player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+        play = GameObject.FindWithTag("Player");
+        player = play.GetComponent<PlayerMovement>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -77,12 +79,14 @@ public class GameManager : MonoBehaviour
         gameOver = true;
         losePanel.SetActive(true);
         SetHint("", false);
+        play.SetActive(false);
     }
     public void winGame()
     {
         gameOver = true;
         winPanel.SetActive(true);
         SetHint("", false);
+        play.SetActive(false);  
     }
 
     public void SetHint(string message, bool show)
@@ -96,6 +100,11 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         timeLeft = timeLeft - Time.deltaTime;
+        
         text.text = "Remaining Time: " + Mathf.Max(Mathf.FloorToInt(timeLeft),0).ToString();
+        if (timeLeft<0)
+        {
+            loseGame() ;
+        }
     }
 }

@@ -154,6 +154,12 @@ public class PlayerMovement : MonoBehaviour
         {
             spriteRenderer.flipX = false;
         }
+        Vector2 origin = transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.up, ceilingCheckDistance, hangableCeilingMask);
+        if (!hit.collider)
+        {
+            StopHanging();
+        }
     }
 
     private void ShootFacingDirection()
@@ -172,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ShootToMouse()
     {
-        if (gm.gumCount <= 0) return;
+        if (gm.gumCount <= 1) return;
         Instantiate(gum, transform.position, Quaternion.identity);
         gm.useGum(false);
     }
