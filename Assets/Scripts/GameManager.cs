@@ -1,7 +1,5 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
@@ -19,11 +17,14 @@ public class GameManager : MonoBehaviour
     private PlayerMovement player;
     public GameObject winPanel;
     public GameObject losePanel;
+    [Tooltip("Temporary: disables fail screen and game over state when losing.")]
+    public bool suppressLoseScreen = true;
     [Tooltip("Optional: shows hints like 'Press SPACE to use gum' when near the nerd.")]
     public TextMeshProUGUI hintText;
 
     private void Awake()
     {
+        suppressLoseScreen = true;
         if (Instance == null)
         {
             Instance = this;
@@ -49,7 +50,6 @@ public class GameManager : MonoBehaviour
     public void useGum(bool hit = false)
     {
         if (gameOver) return;
-        if (hit && player != null && player.isStarStruck) return;
 
         if (gumCount <= 0)
         {
@@ -73,13 +73,18 @@ public class GameManager : MonoBehaviour
 
         if (hit && gumCount <= 0)
         {
-            gameOver = true;
             loseGame();
         }
     }
 
     public void loseGame()
     {
+        if (suppressLoseScreen)
+        {
+            SetHint("", false);
+            return;
+        }
+
         gameOver = true;
         losePanel.SetActive(true);
         SetHint("", false);
@@ -103,10 +108,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-<<<<<<< HEAD
-        timeLeft = timeLeft - Time.deltaTime;
-        
-=======
         if (gameOver) return;
 
         timeLeft -= Time.deltaTime;
@@ -115,12 +116,6 @@ public class GameManager : MonoBehaviour
             timeLeft = 0f;
             loseGame();
         }
-
->>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
         text.text = "Remaining Time: " + Mathf.Max(Mathf.FloorToInt(timeLeft),0).ToString();
-        if (timeLeft<0)
-        {
-            loseGame() ;
-        }
     }
 }

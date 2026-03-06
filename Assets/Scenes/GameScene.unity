@@ -516,11 +516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 03edb4bacfb70974ba8003ee3ae57c57, type: 3}
       propertyPath: m_LocalPosition.x
-<<<<<<< HEAD
       value: 6
-=======
-      value: 3.68
->>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
       objectReference: {fileID: 0}
     - target: {fileID: 7912622483166394597, guid: 03edb4bacfb70974ba8003ee3ae57c57, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2080,11 +2076,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   hangOffset: 0.08
-<<<<<<< HEAD
-=======
   starStruckMoveMultiplier: 0.06
   starStruckMaxSpeedMultiplier: 0.12
->>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
   isStarStruck: 0
   isHanging: 0
   onGround: 0
@@ -2555,19 +2548,11 @@ PrefabInstance:
     - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
       propertyPath: hp
       value: 
-<<<<<<< HEAD
-      objectReference: {fileID: 1669322881946430781, guid: 12dd576fa71394e46a9447716027c442, type: 3}
-    - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
-      propertyPath: dmg
-      value: 
-      objectReference: {fileID: -654569518285863351, guid: f0dc5409295c6f84baf8f9d5ba8e73e9, type: 3}
-=======
       objectReference: {fileID: -5405349054264099260, guid: 2c941627c0028428fbce752f22ed1504, type: 3}
     - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
       propertyPath: dmg
       value: 
       objectReference: {fileID: -6378921619899458215, guid: c9511417cea434dfba5c05a2287c3cc7, type: 3}
->>>>>>> 5222bed8c13ffe2c7caf3e8ae3ccd33ec1fcaebc
     - target: {fileID: 3422118081746696575, guid: 5c608b8b120065b4d9a25e9f8bd67ce5, type: 3}
       propertyPath: textobj
       value: 
