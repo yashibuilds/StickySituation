@@ -47,10 +47,14 @@ public class GameManager : MonoBehaviour
     public void useGum(bool hit = false)
     {
         if (gameOver) return;
+        if (hit && player != null && player.isStarStruck) return;
 
         if (gumCount <= 0)
         {
-            loseGame();
+            if (hit)
+            {
+                loseGame();
+            }
             return;
         }
 
@@ -65,7 +69,7 @@ public class GameManager : MonoBehaviour
             player.takeHit();
         }
 
-        if (gumCount <= 0)
+        if (hit && gumCount <= 0)
         {
             gameOver = true;
             loseGame();
@@ -95,7 +99,15 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timeLeft = timeLeft - Time.deltaTime;
+        if (gameOver) return;
+
+        timeLeft -= Time.deltaTime;
+        if (timeLeft <= 0f)
+        {
+            timeLeft = 0f;
+            loseGame();
+        }
+
         text.text = "Remaining Time: " + Mathf.Max(Mathf.FloorToInt(timeLeft),0).ToString();
     }
 }

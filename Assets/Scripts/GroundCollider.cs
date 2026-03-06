@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class GroundCollider : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private PlayerMovement playerMovement;
+    private int floorContactCount = 0;
+
+    void Awake()
     {
-        
+        playerMovement = GetComponentInParent<PlayerMovement>();
     }
 
     bool isFloor(GameObject obj)
@@ -14,13 +16,23 @@ public class GroundCollider : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (isFloor(collision.gameObject))
+        if (!isFloor(collision.gameObject)) return;
+
+        floorContactCount++;
+        if (playerMovement != null)
         {
-            GetComponentInParent<PlayerMovement>().onGround = true;
+            playerMovement.onGround = true;
         }
     }
+
     private void OnCollisionExit2D(Collision2D collision)
     {
-        GetComponentInParent<PlayerMovement>().onGround = false;
+        if (!isFloor(collision.gameObject)) return;
+
+        floorContactCount = Mathf.Max(0, floorContactCount - 1);
+        if (playerMovement != null)
+        {
+            playerMovement.onGround = floorContactCount > 0;
+        }
     }
 }
